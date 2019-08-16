@@ -33,7 +33,19 @@ import java.util.concurrent.locks.ReentrantLock;
  * This class is <em>not</em> synchronized, but can instead managed by a
  * {@link Lock} attached to the {@code DataBuffer} (see {@link #getLock}).
  * @author netflixoss
- * FIXME 用数据来存储数据的buffer
+ * FIXME 固定大小的数据收集缓冲区，用于保存滑动窗口
+ *
+ * FIXME *最近添加的值。
+ *
+ * FIXME *@code databuffer也是@link distribution，因此收集
+ *
+ * FIXME *有关添加到缓冲区的数据的基本统计信息。
+ *
+ * FIXME *这些统计数据是动态管理的，反映了所有的数据
+ *
+ * FIXME 数据统计时，保存统计的最近的部分数据；
+ *
+ * FIXME 循环使用内存过的数组，如果超过size，直接覆盖；
  */
 public class DataBuffer extends Distribution {
 

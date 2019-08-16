@@ -22,7 +22,7 @@ package com.netflix.stats.distribution;
  * Abstract MBean interface for objects that describe the general
  * characteristics of a distribution of (double) values.
  * This interface supports the standard MBean management interface,
- * so implementing classes will support JMX monitoring.
+ * so implementing classes will support FIXME JMX monitoring.
  *
  * FIXME 如何实现分布式统计的问题，是统计其中一个节点后，存储到数据里，如何从数据库里，再次统计出该服务级别的统计数据？？
  * FIXME 1.如何是上面描述，存在二次读取数据库，并存在二次汇总的情况，读取数据库，存在定时刷新的问题；

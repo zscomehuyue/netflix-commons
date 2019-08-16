@@ -48,9 +48,9 @@ import java.util.concurrent.atomic.AtomicLong;
  * {@link com.google.common.eventbus.EventBus} but the absence of descent extension points forces us to inspire but
  * not extend that implementation. The critical parts that drove us towards this approach are:
  * <ul>
- <li>Inability to add a filter for publisher/subscriber. We would need to copy part of code to do this.</li>
- <li>Inability to easily create custom handler wrappers for our style of async dispatch.</li>
- </ul>
+ * <li>Inability to add a filter for publisher/subscriber. We would need to copy part of code to do this.</li>
+ * <li>Inability to easily create custom handler wrappers for our style of async dispatch.</li>
+ * </ul>
  *
  * @author Nitesh Kant (nkant@netflix.com)
  */
@@ -59,7 +59,7 @@ public class EventBusImpl implements EventBus {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventBusImpl.class);
 
     static final DynamicIntProperty STATS_COLLECTION_DURATION_MILLIS =
-            DynamicPropertyFactory.getInstance().getIntProperty("eventbus.stats.collection.duration.millis", 60*1000);
+            DynamicPropertyFactory.getInstance().getIntProperty("eventbus.stats.collection.duration.millis", 60 * 1000);
 
     /**
      * Event type VS consumers map. Any event for which consumers are required, must query this collection for all the
@@ -102,30 +102,30 @@ public class EventBusImpl implements EventBus {
      */
     private static LoadingCache<Class<?>, Set<Class<?>>> eventHierarchyCache =
             CacheBuilder.newBuilder()
-                        .weakKeys()
-                        .build(new CacheLoader<Class<?>, Set<Class<?>>>() {
-                            @Override
-                            public Set<Class<?>> load(Class<?> concreteClass) throws Exception {
-                                List<Class<?>> parents = Lists.newLinkedList();
-                                Set<Class<?>> classes = Sets.newHashSet();
+                    .weakKeys()
+                    .build(new CacheLoader<Class<?>, Set<Class<?>>>() {
+                        @Override
+                        public Set<Class<?>> load(Class<?> concreteClass) throws Exception {
+                            List<Class<?>> parents = Lists.newLinkedList();
+                            Set<Class<?>> classes = Sets.newHashSet();
 
-                                parents.add(concreteClass);
+                            parents.add(concreteClass);
 
-                                while (!parents.isEmpty()) {
-                                    Class<?> clazz = parents.remove(0);
-                                    classes.add(clazz);
+                            while (!parents.isEmpty()) {
+                                Class<?> clazz = parents.remove(0);
+                                classes.add(clazz);
 
-                                    Class<?> parent = clazz.getSuperclass();
-                                    if (parent != null && !parent.equals(Object.class)) { // Do not allow subs on java.lang.Object
-                                        parents.add(parent);
-                                    }
-
-                                    Collections.addAll(parents, clazz.getInterfaces());
+                                Class<?> parent = clazz.getSuperclass();
+                                if (parent != null && !parent.equals(Object.class)) { // Do not allow subs on java.lang.Object
+                                    parents.add(parent);
                                 }
 
-                                return classes;
+                                Collections.addAll(parents, clazz.getInterfaces());
                             }
-                        });
+
+                            return classes;
+                        }
+                    });
 
     private ConsumerQueueSupplier consumerQueueSupplier = new DefaultConsumerQueueSupplier();
 
@@ -135,7 +135,7 @@ public class EventBusImpl implements EventBus {
     private volatile CatchAllSubscriber catchAllSubInstance;
 
     public EventBusImpl() {
-        
+
     }
 
     @Override
@@ -174,11 +174,11 @@ public class EventBusImpl implements EventBus {
                     Set<EventConsumer> eventConsumers = consumersByEventType.get(anEventSubType);
                     if (!eventConsumers.isEmpty()) {
                         /*
-                        * Since any change in the underlying consumers get reflected in this set, we get the benefit of any changes
-                        * to the consumers after this check being reflected when we invoke these consumers.
-                        * We add the evenType to the map and not the subType as the event creator is only aware of the high
-                        * level types & not the entire hierarchy.
-                        */
+                         * Since any change in the underlying consumers get reflected in this set, we get the benefit of any changes
+                         * to the consumers after this check being reflected when we invoke these consumers.
+                         * We add the evenType to the map and not the subType as the event creator is only aware of the high
+                         * level types & not the entire hierarchy.
+                         */
                         interestedConsumersByType.put(eventType, eventConsumers);
                     }
                 }
@@ -186,7 +186,7 @@ public class EventBusImpl implements EventBus {
 
             if (interestedConsumersByType.isEmpty()) {
                 LOGGER.debug(String.format("Skipping publishing of events types %s as there are no interested listeners.",
-                                           Arrays.toString(eventTypes)));
+                        Arrays.toString(eventTypes)));
                 return;
             }
 
@@ -228,7 +228,7 @@ public class EventBusImpl implements EventBus {
 
         CopyOnWriteArrayList<EventConsumer> existingConsumers =
                 consumersBySubscriberClass.putIfAbsent(subscriber.getClass(),
-                                                       new CopyOnWriteArrayList<EventConsumer>((allConsumersForThisSubscriber)));
+                        new CopyOnWriteArrayList<EventConsumer>((allConsumersForThisSubscriber)));
         if (null != existingConsumers) {
             existingConsumers.addAll(allConsumersForThisSubscriber);
         } else {
@@ -328,7 +328,7 @@ public class EventBusImpl implements EventBus {
         if (null != consumerInAction) {
             consumerInAction.addFilters(filter);
             LOGGER.info(String.format("Added a new filter %s for subscriber method %s", filter,
-                                      subscriberInfo.getSubscriberMethod().toGenericString()));
+                    subscriberInfo.getSubscriberMethod().toGenericString()));
         }
     }
 
@@ -457,7 +457,7 @@ public class EventBusImpl implements EventBus {
 
     private boolean applyEventLevelFilters(Object event) {
         return EventBusUtils.applyFilters(event, eventTypeVsFilters.get(event.getClass()), stats.filterStats,
-                                          " publisher ", LOGGER);
+                " publisher ", LOGGER);
     }
 
     /**
@@ -465,9 +465,7 @@ public class EventBusImpl implements EventBus {
      * methods adhere to the rules of the game using {@link SubscriberValidator}
      *
      * @param subscriber Subscriber instance for which the subscriber methods are to be found.
-     *
      * @return List of valid subscriber methods.
-     *
      * @throws InvalidSubscriberException If any one of the method is invalid.
      */
     private List<Method> findSubscriberMethods(Object subscriber) throws InvalidSubscriberException {
@@ -486,9 +484,9 @@ public class EventBusImpl implements EventBus {
                     subscriberMethods.add(method);
                 } catch (SecurityException e) {
                     LOGGER.error("A subscriber method: " + method.toGenericString() +
-                                 " is not a public method and the security settings does not allow accessing non-public"
-                                 +
-                                 " methods via reflection. This subscriber method will not be registered.", e);
+                            " is not a public method and the security settings does not allow accessing non-public"
+                            +
+                            " methods via reflection. This subscriber method will not be registered.", e);
                 }
             }
         }
@@ -502,10 +500,9 @@ public class EventBusImpl implements EventBus {
     /**
      * Finds the {@link EventConsumer} instance registered with this event bus, for the passed <code>subscriberMethod</code>
      *
-     * @param subscriberInfo Subscriber information.
+     * @param subscriberInfo  Subscriber information.
      * @param callDescription Description of the original call for which this method is invoked. This is used for
      *                        logging.
-     *
      * @return The {@link EventConsumer} instance. <code>null</code> if none found.
      */
     private EventConsumer findEventConsumerForSubscriberMethod(SubscriberInfo subscriberInfo, String callDescription) {
@@ -527,7 +524,7 @@ public class EventBusImpl implements EventBus {
             }
         }
         LOGGER.info(String.format("Subscriber: %s is not registered (or already removed). Ignoring %s call.",
-                                  subscriberMethod, callDescription));
+                subscriberMethod, callDescription));
         return null;
     }
 
@@ -549,7 +546,7 @@ public class EventBusImpl implements EventBus {
 
     private boolean isTheSameSubscriber(SubscriberInfo subscriberInfo, EventConsumer eventConsumer) {
         return eventConsumer.getDelegateSubscriber().equals(subscriberInfo.getSubscriberMethod())
-               && eventConsumer.getContainerInstance() == subscriberInfo.getSubscriberInstance();
+                && eventConsumer.getContainerInstance() == subscriberInfo.getSubscriberInstance();
     }
 
     /**
@@ -566,7 +563,7 @@ public class EventBusImpl implements EventBus {
          * @param subscriberMethod The subscriber method for the consumer.
          * @param subscriberConfig Subscriber configuration.
          * @param queueSizeCounter A counter that holds the current queue size.
-         *  @return The queue instance for the passed parameters.
+         * @return The queue instance for the passed parameters.
          */
         ConsumerQueue get(Method subscriberMethod, SubscriberConfigProvider.SubscriberConfig subscriberConfig,
                           AtomicLong queueSizeCounter);
@@ -585,7 +582,6 @@ public class EventBusImpl implements EventBus {
              * there is space the event is added to the queue.
              *
              * @param event Event to add to the queue.
-             *
              * @return <code>true</code>  if the event was added, <code>false</code> otherwise.
              */
             boolean offer(Object event);
@@ -602,7 +598,6 @@ public class EventBusImpl implements EventBus {
              * Removes an element from the queue. This method blocks till an event is available.
              *
              * @return Next event in the queue.
-             *
              * @throws InterruptedException If the wait gets interrupted.
              */
             Object blockingTake() throws InterruptedException;

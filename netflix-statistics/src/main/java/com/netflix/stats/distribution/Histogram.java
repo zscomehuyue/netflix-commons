@@ -209,6 +209,11 @@ public class Histogram extends Distribution implements HistogramMBean {
         return getPercentile(50);             // SUPPRESS CHECKSTYLE MagicNumber
     }
 
+    /**
+     * FIXME 寻找n之后的数据？
+     *
+     * @return
+     */
     private double getNthValue(double n) {
         // A few simple cases to start off
         if (n <= 0) {

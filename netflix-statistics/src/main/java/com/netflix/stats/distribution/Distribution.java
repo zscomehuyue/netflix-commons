@@ -34,6 +34,7 @@ package com.netflix.stats.distribution;
  * @author netflixoss $
  * @version $Revision: $
  * FIXME 分配;分布;分发;分送;(商品)运销，经销，分销
+ * FIXME 方差，标准方差的计算类；
  */
 public class Distribution implements DistributionMBean, DataCollector {
 
@@ -117,7 +118,8 @@ public class Distribution implements DistributionMBean, DataCollector {
      * {@inheritDoc}
      * 方差   todo 方差为何是下面的算法？？
      * 1、方差是各个数据分别与其平均数之差的平方的和的平均数，用字母D表示。在概率论和数理统计中，
-     * FIXME 方差（Variance）用来度量随机变量和其数学期望（即均值）之间的偏离程度。在许多实际问题中，研究随机变量和均值之间的偏离程度有着重要意义。
+     * FIXME 方差（Variance）用来度量随机变量和其数学期望（即均值）之间的偏离程度。
+     * FIXME 在许多实际问题中，研究随机变量和均值之间的偏离程度有着重要意义。
      * <p>
      * 其中，x表示样本的平均数，n表示样本的数量，xi表示个体，而s^2就表示方差
      * <p>
